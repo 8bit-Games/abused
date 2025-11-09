@@ -10,6 +10,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Path to game engine source (adjust relative path as needed)
 set(ABUSED_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../src)
 
+# SDL2 paths (from setup script)
+set(SDL2_DIR ${CMAKE_CURRENT_SOURCE_DIR}/jni/SDL2)
+set(SDL2_MIXER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/jni/SDL2_mixer)
+
 # Include directories
 include_directories(
     ${ABUSED_SRC_DIR}
@@ -19,6 +23,8 @@ include_directories(
     ${ABUSED_SRC_DIR}/sdlport
     ${ABUSED_SRC_DIR}/mobile
     ${ABUSED_SRC_DIR}/lol
+    ${SDL2_DIR}/include
+    ${SDL2_MIXER_DIR}/include
 )
 
 # Collect all game engine source files
@@ -99,24 +105,46 @@ add_library(abused-engine SHARED
     ${BRIDGE_SOURCES}
 )
 
-# Find SDL2 (must be added to Android dependencies)
-# Note: You'll need to add SDL2 via Gradle or as a prebuilt library
-find_library(SDL2_LIBRARY SDL2)
-find_library(SDL2_MIXER_LIBRARY SDL2_mixer)
+# Add SDL2 as a subdirectory (builds from source)
+if(EXISTS ${SDL2_DIR}/CMakeLists.txt)
+    add_subdirectory(${SDL2_DIR} SDL2)
+    set(SDL2_AVAILABLE TRUE)
+else()
+    message(WARNING "SDL2 not found at ${SDL2_DIR}. Run setup-sdl2-android.sh")
+    set(SDL2_AVAILABLE FALSE)
+endif()
+
+# Add SDL2_mixer as a subdirectory
+if(EXISTS ${SDL2_MIXER_DIR}/CMakeLists.txt)
+    add_subdirectory(${SDL2_MIXER_DIR} SDL2_mixer)
+    set(SDL2_MIXER_AVAILABLE TRUE)
+else()
+    message(WARNING "SDL2_mixer not found at ${SDL2_MIXER_DIR}. Run setup-sdl2-android.sh")
+    set(SDL2_MIXER_AVAILABLE FALSE)
+endif()
 
 # Find Android system libraries
 find_library(GLES_LIBRARY GLESv2)
 find_library(LOG_LIBRARY log)
 find_library(ANDROID_LIBRARY android)
+find_library(OPENSLES_LIBRARY OpenSLES)
 
 # Link libraries
 target_link_libraries(abused-engine
-    ${SDL2_LIBRARY}
-    ${SDL2_MIXER_LIBRARY}
     ${GLES_LIBRARY}
     ${LOG_LIBRARY}
     ${ANDROID_LIBRARY}
+    ${OPENSLES_LIBRARY}
 )
+
+# Link SDL2 if available
+if(SDL2_AVAILABLE)
+    target_link_libraries(abused-engine SDL2::SDL2)
+endif()
+
+if(SDL2_MIXER_AVAILABLE)
+    target_link_libraries(abused-engine SDL2_mixer::SDL2_mixer)
+endif()
 
 # Compiler flags
 target_compile_options(abused-engine PRIVATE
