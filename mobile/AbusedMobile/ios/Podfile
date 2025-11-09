@@ -1,0 +1,46 @@
+# iOS Podfile for Abused Mobile
+
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '13.0'
+install! 'cocoapods', :deterministic_uuids => false
+
+target 'AbusedMobile' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => true,
+    :fabric_enabled => false,
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  # SDL2 for iOS
+  # You'll need to add SDL2 and SDL2_mixer as frameworks
+  # Option 1: Add as local framework
+  # pod 'SDL2', :path => '../../../external/SDL2-iOS'
+  # pod 'SDL2_mixer', :path => '../../../external/SDL2_mixer-iOS'
+
+  # Option 2: Use prebuilt frameworks (recommended)
+  # Download SDL2.framework and SDL2_mixer.framework and add to project
+
+  target 'AbusedMobileTests' do
+    inherit! :complete
+  end
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      :mac_catalyst_enabled => false
+    )
+
+    # Enable C++ in bridging header
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++14'
+        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+      end
+    end
+  end
+end
