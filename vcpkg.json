@@ -1,6 +1,7 @@
 {
-    "name": "abuse",
-    "version": "0.9.0",
+    "name": "abused",
+    "version": "1.0.0",
+    "description": "Abused - Dark Sci-Fi Mobile Shooter",
     "dependencies": [
         "sdl2",
         "sdl2-mixer"

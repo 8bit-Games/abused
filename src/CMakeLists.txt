@@ -9,16 +9,16 @@ add_subdirectory(sdlport)
 if (WIN32)
     # FIXME: Where should this logic reside? Whatever, first generate the
     # resource script...
-    get_filename_component(abuse_ICON_PATH ${CPACK_WIX_PRODUCT_ICON} ABSOLUTE)
+    get_filename_component(abused_ICON_PATH ${CPACK_WIX_PRODUCT_ICON} ABSOLUTE)
     configure_file(win32/resources.rc.in ${CMAKE_CURRENT_BINARY_DIR}/resources.rc ESCAPE_QUOTES NEWLINE_STYLE WIN32)
     # And then include it
     # FIXME: I think this means the build location can't have spaces
-    set(abuse_RESOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+    set(abused_RESOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
 else()
-    set(abuse_RESOURCE_FILES "")
+    set(abused_RESOURCE_FILES "")
 endif()
 
-add_executable(abuse
+add_executable(abused
     common.h
     lol/matrix.cpp lol/matrix.h
     lol/timer.cpp lol/timer.h
@@ -73,57 +73,57 @@ add_executable(abuse
     id.h netface.h isllist.h sbar.h
     nfserver.h
     ui/volumewindow.cpp ui/volumewindow.h
-    ${abuse_RESOURCE_FILES}
+    ${abused_RESOURCE_FILES}
 )
 
-set_target_properties(abuse PROPERTIES MACOSX_BUNDLE true)
+set_target_properties(abused PROPERTIES MACOSX_BUNDLE true)
 # Note this doesn't install the icon, that's done later
-set_target_properties(abuse PROPERTIES MACOSX_BUNDLE_ICON_FILE "abuse")
-set_target_properties(abuse PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Abuse")
-set_target_properties(abuse PROPERTIES MACOSX_BUNDLE_SHORT_VERSION_STRING "${abuse_VERSION}")
-set_target_properties(abuse PROPERTIES MACOSX_BUNDLE_BUNDLE_VERSION "${abuse_VERSION}")
+set_target_properties(abused PROPERTIES MACOSX_BUNDLE_ICON_FILE "abused")
+set_target_properties(abused PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Abused")
+set_target_properties(abused PROPERTIES MACOSX_BUNDLE_SHORT_VERSION_STRING "${abused_VERSION}")
+set_target_properties(abused PROPERTIES MACOSX_BUNDLE_BUNDLE_VERSION "${abused_VERSION}")
 
-target_link_libraries(abuse lisp)
-target_link_libraries(abuse sdlport)
-target_link_libraries(abuse imlib)
-target_link_libraries(abuse net)
-target_link_libraries(abuse SDL2::SDL2)
-target_link_libraries(abuse SDL2_mixer::SDL2_mixer)
+target_link_libraries(abused lisp)
+target_link_libraries(abused sdlport)
+target_link_libraries(abused imlib)
+target_link_libraries(abused net)
+target_link_libraries(abused SDL2::SDL2)
+target_link_libraries(abused SDL2_mixer::SDL2_mixer)
 if(OPENGL_FOUND)
-    target_link_libraries(abuse ${OPENGL_LIBRARIES})
+    target_link_libraries(abused ${OPENGL_LIBRARIES})
 endif(OPENGL_FOUND)
 
 if(APPLE)
     # Link CoreFoundation
-    target_link_libraries(abuse "-framework CoreFoundation")
+    target_link_libraries(abused "-framework CoreFoundation")
 endif()
 
-add_executable(abuse-tool tool/abuse-tool.cpp crc.cpp crc.h)
+add_executable(abused-tool tool/abuse-tool.cpp crc.cpp crc.h)
 
-target_link_libraries(abuse-tool imlib)
+target_link_libraries(abused-tool imlib)
 
 include_directories(
-    ${abuse_SOURCE_DIR}/src
-    ${abuse_SOURCE_DIR}/src/lisp
-    ${abuse_SOURCE_DIR}/src/imlib
-    ${abuse_SOURCE_DIR}/src/net
+    ${abused_SOURCE_DIR}/src
+    ${abused_SOURCE_DIR}/src/lisp
+    ${abused_SOURCE_DIR}/src/imlib
+    ${abused_SOURCE_DIR}/src/net
     ${SDL2_INCLUDE_DIR}
     ${SDL2_MIXER_INCLUDE_DIR}
 )
 if(WIN32)
     # Under Windows, throw them into the root
-    install(TARGETS abuse abuse-tool
+    install(TARGETS abused abused-tool
         RUNTIME DESTINATION "."
         LIBRARY DESTINATION ".")
     install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ".")
     install(FILES $<TARGET_FILE:SDL2_mixer::SDL2_mixer> DESTINATION ".")
 else()
     # Under Linux, we want the tools in bin
-    install(TARGETS abuse abuse-tool RUNTIME DESTINATION bin
+    install(TARGETS abused abused-tool RUNTIME DESTINATION bin
     BUNDLE DESTINATION "${CMAKE_INSTALL_PREFIX}")
     if(APPLE)
         # macOS should probably include SDL rather than dynamically link them like Linux does
         # Add icon
-        install(FILES "../macOS/abuse.icns" DESTINATION "${CMAKE_INSTALL_PREFIX}/abuse.app/Contents/Resources")
+        install(FILES "../macOS/abused.icns" DESTINATION "${CMAKE_INSTALL_PREFIX}/abused.app/Contents/Resources")
     endif()
 endif()
