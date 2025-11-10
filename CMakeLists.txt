@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-project(abuse C CXX)
-set(abuse_VERSION 0.9.1)
-set(abuse_VERSION_MAJOR 0)
-set(abuse_VERSION_MINOR 9)
-set(abuse_VERSION_PATCH 1)
-set(abuse_VERSION_TWEAK 0)
+project(abused C CXX)
+set(abused_VERSION 1.0.0)
+set(abused_VERSION_MAJOR 1)
+set(abused_VERSION_MINOR 0)
+set(abused_VERSION_PATCH 0)
+set(abused_VERSION_TWEAK 0)
 
 # Detect the platform, as there's quite a bit of platform variation
 
@@ -46,31 +46,31 @@ if(WIN32)
 elseif(APPLE)
     # Under macOS, I actually want to redirect this to an app bundle,
     # which makes things weird.
-    set(ASSETDIR "abuse.app/Contents/Resources/data")
+    set(ASSETDIR "abused.app/Contents/Resources/data")
 else()
     # Under Linux, match the original autotools prefix
-    set(ASSETDIR "share/games/abuse")
+    set(ASSETDIR "share/games/abused")
     # Only define this for ports that actually use it
     add_definitions(-DASSETDIR="${CMAKE_INSTALL_PREFIX}/${ASSETDIR}")
 endif()
 
-add_definitions(-DPACKAGE_NAME="abuse")
-add_definitions(-DPACKAGE_VERSION="${abuse_VERSION}")
+add_definitions(-DPACKAGE_NAME="abused")
+add_definitions(-DPACKAGE_VERSION="${abused_VERSION}")
 add_definitions(-DHAVE_CONFIG_H)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # Packaging
 
-set(CPACK_PACKAGE_NAME "Abuse")
-set(CPACK_PACKAGE_VENDOR "Crack-Dot-Com")
-set(CPACK_PACKAGE_VERSION_MAJOR ${abuse_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${abuse_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${abuse_VERSION_PATCH})
+set(CPACK_PACKAGE_NAME "Abused")
+set(CPACK_PACKAGE_VENDOR "8bit-Games")
+set(CPACK_PACKAGE_VERSION_MAJOR ${abused_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${abused_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${abused_VERSION_PATCH})
 #set(CPACK_PACKAGE_DESCRIPTION_FILE "README.md")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Abuse game")
-#set(CPACK_PACKAGE_ICON "doc/abuse.bmp")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Abused - Dark Sci-Fi Mobile Shooter")
+#set(CPACK_PACKAGE_ICON "doc/abused.bmp")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set(CPACK_PACKAGE_EXECUTABLES "abuse;Abuse")
+set(CPACK_PACKAGE_EXECUTABLES "abused;Abused")
 if (WIN32)
     set(CPACK_GENERATOR "WIX;ZIP")
     # This doesn't make sense for a Windows archive
@@ -84,7 +84,7 @@ endif()
 set(CPACK_WIX_UPGRADE_GUID "3A89DEB1-B520-4DF5-B44D-96A0EBB27DC0")
 set(CPACK_WIX_LICENSE_RTF "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.rtf")
 set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/doc/icon.ico")
-set(CPACK_WIX_PROGRAM_MENU_FOLDER "Abuse")
+set(CPACK_WIX_PROGRAM_MENU_FOLDER "Abused")
 
 include(CPack)
 
